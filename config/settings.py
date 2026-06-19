@@ -97,3 +97,10 @@ LOGOUT_REDIRECT_URL = 'login'
 ADMIN_SITE_HEADER = "AfriDigital School Admin"
 ADMIN_SITE_TITLE = "AfriDigital Admin"
 ADMIN_INDEX_TITLE = "Dashboard"
+
+# Production settings
+import dj_database_url
+DATABASES['default'] = dj_database_url.config(conn_max_age=600, ssl_require=True)
+
+# Static files
+STATIC_ROOT = BASE_DIR / 'staticfiles'
