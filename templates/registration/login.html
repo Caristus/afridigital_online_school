@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - AfriDigital Online School</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+        body::before {
+            content: ''; position: absolute; width: 200%; height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 50px 50px; animation: move 20s linear infinite;
+        }
+        @keyframes move { 0% { transform: translate(0, 0); } 100% { transform: translate(50px, 50px); } }
+        
+        .login-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            max-width: 900px;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            position: relative;
+            z-index: 1;
+            animation: slideUp 0.5s ease;
+        }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .left-panel {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 40px 30px;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        .left-panel h1 { font-size: 1.8em; margin-bottom: 10px; }
+        .left-panel p { font-size: 0.95em; line-height: 1.4; }
+        .features { margin-top: 20px; list-style: none; text-align: left; }
+        .features li { margin: 8px 0; display: flex; align-items: center; gap: 8px; font-size: 0.9em; }
+        .features li::before {
+            content: '✓'; background: rgba(255,255,255,0.2); width: 20px; height: 20px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.8em;
+        }
+        
+        .right-panel { padding: 30px; display: flex; flex-direction: column; justify-content: center; }
+        .logo { text-align: center; margin-bottom: 15px; }
+        .logo h2 { color: #667eea; font-size: 1.6em; margin-bottom: 2px; }
+        .logo p { color: #666; font-size: 0.8em; }
+        
+        .form-group { margin-bottom: 12px; }
+        .form-group label { display: block; margin-bottom: 4px; color: #333; font-weight: 600; font-size: 0.85em; }
+        .form-group input {
+            width: 100%; padding: 10px; border: 2px solid #e0e0e0;
+            border-radius: 8px; font-size: 0.95em; transition: all 0.3s ease;
+        }
+        .form-group input:focus { outline: none; border-color: #667eea; box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1); }
+        
+        .btn-login {
+            width: 100%; padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white; border: none; border-radius: 8px;
+            font-size: 1em; font-weight: 600; cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .btn-login:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4); }
+        
+        .divider { text-align: center; margin: 12px 0; position: relative; }
+        .divider::before { content: ''; position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: #e0e0e0; }
+        .divider span { background: white; padding: 0 10px; color: #999; position: relative; font-size: 0.8em; }
+        
+        .user-types {
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 12px;
+        }
+        .user-type {
+            padding: 8px 4px; background: #f8f9fa; border-radius: 6px; text-align: center;
+            font-size: 0.75em; color: #666; border: 2px solid transparent;
+            transition: all 0.3s ease; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .user-type:hover { border-color: #667eea; background: #f0f4ff; color: #667eea; transform: translateY(-1px); }
+        .user-type.active { border-color: #667eea; background: #667eea; color: white; }
+        .user-type.system-admin { background: #fef3c7; border-color: #f59e0b; color: #92400e; }
+        .user-type.system-admin:hover { background: #fde68a; border-color: #d97706; }
+        
+        .error-message, .success-message { padding: 8px 12px; border-radius: 6px; margin-bottom: 10px; font-size: 0.85em; }
+        .error-message { background: #fee; color: #c33; border-left: 4px solid #c33; }
+        .success-message { background: #e8f5e9; color: #2e7d32; border-left: 4px solid #388e3c; }
+        
+        .demo-hint {
+            background: #fff3cd; color: #856404; padding: 6px 10px;
+            border-radius: 6px; font-size: 0.75em; margin-bottom: 12px;
+            border-left: 3px solid #ffc107; text-align: center;
+        }
+        .footer-links { text-align: center; margin-top: 10px; font-size: 0.8em; }
+        .footer-links a { color: #667eea; text-decoration: none; }
+        
+        @media (max-width: 768px) {
+            .login-container { grid-template-columns: 1fr; }
+            .left-panel { display: none; }
+            .user-types { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="left-panel">
+            <h1>🎓 Welcome Back!</h1>
+            <p>Access your personalized learning dashboard</p>
+            <ul class="features">
+                <li>Track academic progress</li>
+                <li>Access course materials</li>
+                <li>View grades & transcripts</li>
+                <li>Manage schedules</li>
+            </ul>
+        </div>
+        
+        <div class="right-panel">
+            <div class="logo">
+                <h2>AfriDigital School</h2>
+                <p>ERP + LMS Platform</p>
+            </div>
+
+            {% if messages %}
+                {% for message in messages %}
+                    {% if message.tags == 'error' %}<div class="error-message">{{ message }}</div>
+                    {% elif message.tags == 'success' %}<div class="success-message">{{ message }}</div>{% endif %}
+                {% endfor %}
+            {% endif %}
+
+            <div class="demo-hint">💡 Click any user type below to auto-fill demo credentials</div>
+
+            <form method="post" action="{% url 'login' %}" id="loginForm">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="id_username">Email Address</label>
+                    <input type="email" id="id_username" name="username" required placeholder="your.email@example.com" autofocus>
+                </div>
+                <div class="form-group">
+                    <label for="id_password">Password</label>
+                    <input type="password" id="id_password" name="password" required placeholder="Enter your password">
+                </div>
+                <button type="submit" class="btn-login">Sign In</button>
+            </form>
+
+            <div class="divider"><span>Quick Login As</span></div>
+
+            <div class="user-types">
+                <div class="user-type system-admin" onclick="quickLogin('sysadmin@afridigital.com', 'sysadmin123', this)">⚙️ System Admin</div>
+                <div class="user-type" onclick="quickLogin('admin@afridigital.com', 'admin123', this)">️ School Admin</div>
+                <div class="user-type" onclick="quickLogin('john.smith@afridigital.com', 'teacher123', this)">👨‍🏫 Teacher</div>
+                <div class="user-type" onclick="quickLogin('student1@student.com', 'student123', this)">🎓 Student</div>
+                <div class="user-type" onclick="quickLogin('parent@parent.com', 'parent123', this)">👪 Parent</div>
+                <div class="user-type" onclick="quickLogin('librarian@afridigital.com', 'librarian123', this)">📚 Librarian</div>
+                <div class="user-type" onclick="quickLogin('finance@afridigital.com', 'finance123', this)">💰 Finance</div>
+                <div class="user-type" onclick="quickLogin('transport@afridigital.com', 'transport123', this)">🚌 Transport</div>
+            </div>
+
+            <div class="footer-links">
+                <a href="#">Forgot Password?</a> | <a href="#">Need Help?</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function quickLogin(email, password, element) {
+            document.getElementById('id_username').value = email;
+            document.getElementById('id_password').value = password;
+            document.querySelectorAll('.user-type').forEach(el => el.classList.remove('active'));
+            element.classList.add('active');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transport - AfriDigital</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f5f7fa; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 30px; }
+        .header { background: white; padding: 30px; border-radius: 15px; margin-bottom: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .header h1 { color: #2c3e50; margin-bottom: 10px; }
+        .back-btn { display: inline-block; padding: 10px 20px; background: #667eea; color: white; text-decoration: none; border-radius: 8px; margin-bottom: 20px; }
+        .allocation-card { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-bottom: 30px; }
+        .allocation-card h2 { color: #2c3e50; margin-bottom: 20px; }
+        .info-row { display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid #ecf0f1; }
+        .info-row:last-child { border-bottom: none; }
+        .info-label { color: #7f8c8d; font-weight: 600; }
+        .info-value { color: #2c3e50; font-weight: 600; }
+        .buses-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+        .bus-card { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .bus-card h3 { color: #2c3e50; margin-bottom: 10px; }
+        .bus-card p { color: #7f8c8d; margin-bottom: 8px; }
+        .empty-state { text-align: center; padding: 60px; color: #7f8c8d; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/dashboard/" class="back-btn">← Back to Dashboard</a>
+        <div class="header">
+            <h1>🚌 Transport</h1>
+            <p>Manage buses and routes</p>
+        </div>
+        
+        {% if allocation %}
+        <div class="allocation-card">
+            <h2>Your Transport Allocation</h2>
+            <div class="info-row">
+                <span class="info-label">Bus Number</span>
+                <span class="info-value">{{ allocation.bus.bus_number }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Route</span>
+                <span class="info-value">{{ allocation.route.name }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Pickup Point</span>
+                <span class="info-value">{{ allocation.pickup_point }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Driver</span>
+                <span class="info-value">{{ allocation.bus.driver_name }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Driver Phone</span>
+                <span class="info-value">{{ allocation.bus.driver_phone }}</span>
+            </div>
+        </div>
+        {% endif %}
+        
+        {% if buses %}
+        <h2 style="color: #2c3e50; margin-bottom: 20px;">Active Buses</h2>
+        <div class="buses-grid">
+            {% for bus in buses %}
+            <div class="bus-card">
+                <h3>Bus {{ bus.bus_number }}</h3>
+                <p>Capacity: {{ bus.capacity }} students</p>
+                <p>Driver: {{ bus.driver_name }}</p>
+                <p>Phone: {{ bus.driver_phone }}</p>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        
+        {% if not allocation and not buses %}
+        <div class="empty-state">
+            <h2>No transport information</h2>
+            <p>Transport details will appear here when allocated.</p>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>

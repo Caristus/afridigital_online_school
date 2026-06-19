@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library - AfriDigital</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f5f7fa; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 30px; }
+        .header { background: white; padding: 30px; border-radius: 15px; margin-bottom: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .header h1 { color: #2c3e50; margin-bottom: 10px; }
+        .back-btn { display: inline-block; padding: 10px 20px; background: #667eea; color: white; text-decoration: none; border-radius: 8px; margin-bottom: 20px; }
+        .books-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+        .book-card { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .book-card h3 { color: #2c3e50; margin-bottom: 10px; }
+        .book-card p { color: #7f8c8d; margin-bottom: 8px; font-size: 0.9em; }
+        .availability { display: inline-block; padding: 5px 12px; border-radius: 20px; font-size: 0.85em; font-weight: 600; background: #e8f5e9; color: #388e3c; }
+        .borrowed-section { margin-top: 30px; }
+        .borrowed-section h2 { color: #2c3e50; margin-bottom: 20px; }
+        .empty-state { text-align: center; padding: 60px; color: #7f8c8d; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/dashboard/" class="back-btn">← Back to Dashboard</a>
+        <div class="header">
+            <h1>📖 Library</h1>
+            <p>Browse and borrow books</p>
+        </div>
+        
+        {% if borrowed_books %}
+        <div class="borrowed-section">
+            <h2>📚 Your Borrowed Books</h2>
+            <div class="books-grid">
+                {% for borrow in borrowed_books %}
+                <div class="book-card">
+                    <h3>{{ borrow.book.title }}</h3>
+                    <p>by {{ borrow.book.author }}</p>
+                    <p>Due: {{ borrow.due_date|date:"M d, Y" }}</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+        
+        <h2 style="color: #2c3e50; margin: 30px 0 20px;">Available Books</h2>
+        {% if books %}
+        <div class="books-grid">
+            {% for book in books %}
+            <div class="book-card">
+                <h3>{{ book.title }}</h3>
+                <p>by {{ book.author }}</p>
+                <p>ISBN: {{ book.isbn }}</p>
+                <p>Category: {{ book.category }}</p>
+                <span class="availability">{{ book.available_copies }} available</span>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <h2>No books available</h2>
+            <p>Check back later for new arrivals!</p>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>

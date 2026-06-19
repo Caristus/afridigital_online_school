@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academics - AfriDigital</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f5f7fa; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 30px; }
+        .header { background: white; padding: 30px; border-radius: 15px; margin-bottom: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .header h1 { color: #2c3e50; margin-bottom: 10px; }
+        .header p { color: #7f8c8d; }
+        .back-btn { display: inline-block; padding: 10px 20px; background: #667eea; color: white; text-decoration: none; border-radius: 8px; margin-bottom: 20px; }
+        .courses-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+        .course-card { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); transition: 0.3s; }
+        .course-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .course-card h3 { color: #2c3e50; margin-bottom: 10px; }
+        .course-card p { color: #7f8c8d; margin-bottom: 15px; }
+        .course-code { display: inline-block; padding: 5px 12px; background: #667eea; color: white; border-radius: 20px; font-size: 0.85em; }
+        .empty-state { text-align: center; padding: 60px; color: #7f8c8d; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/dashboard/" class="back-btn">← Back to Dashboard</a>
+        <div class="header">
+            <h1> Academics</h1>
+            <p>Manage your courses and learning materials</p>
+        </div>
+        
+        {% if courses %}
+        <div class="courses-grid">
+            {% for course in courses %}
+            <div class="course-card">
+                <span class="course-code">{{ course.code }}</span>
+                <h3>{{ course.title }}</h3>
+                <p>{{ course.description|truncatewords:20 }}</p>
+                <p><strong>Teacher:</strong> {{ course.teacher.teacher.get_full_name }}</p>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <h2>No courses available</h2>
+            <p>Check back later for new courses!</p>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>

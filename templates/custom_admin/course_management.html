@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Management - AfriDigital</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f5f7fa; }
+        .sidebar {
+            position: fixed; left: 0; top: 0; bottom: 0; width: 280px;
+            background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%);
+            color: white; padding: 30px 20px; overflow-y: auto; z-index: 1000;
+        }
+        .sidebar-brand { text-align: center; padding-bottom: 30px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 30px; }
+        .sidebar-brand h2 { font-size: 1.6em; margin-bottom: 5px; color: #667eea; }
+        .sidebar-brand p { color: #95a5a6; font-size: 0.9em; }
+        .sidebar-menu { list-style: none; }
+        .sidebar-menu li { margin-bottom: 8px; }
+        .sidebar-menu a, .sidebar-menu button {
+            display: flex; align-items: center; gap: 15px; padding: 15px;
+            color: #ecf0f1; text-decoration: none; border-radius: 10px;
+            transition: all 0.3s ease; width: 100%; background: none; border: none;
+            cursor: pointer; font-size: 1em; text-align: left;
+        }
+        .sidebar-menu a:hover, .sidebar-menu button:hover { background: rgba(102, 126, 234, 0.2); color: #667eea; }
+        .main-content { margin-left: 280px; padding: 30px; }
+        .section { background: white; border-radius: 15px; padding: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .section-header { margin-bottom: 25px; padding-bottom: 15px; border-bottom: 2px solid #f0f0f0; }
+        .section-title { color: #2c3e50; font-size: 1.4em; }
+        .btn { display: inline-block; padding: 10px 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-decoration: none; border-radius: 8px; margin-left: 10px; }
+        .btn-logout { background: linear-gradient(135deg, #ff6b6b 0%, #ee5253 100%); color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; }
+        table { width: 100%; border-collapse: collapse; }
+        th { background: #f8f9fa; padding: 15px; text-align: left; color: #2c3e50; font-weight: 600; border-bottom: 2px solid #e0e0e0; }
+        td { padding: 15px; border-bottom: 1px solid #f0f0f0; color: #7f8c8d; }
+        tr:hover td { background: #f8f9fa; }
+        .back-link { color: #667eea; text-decoration: none; margin-bottom: 20px; display: inline-block; }
+    </style>
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <h2>🎓 AfriDigital</h2>
+            <p>Admin Control Panel</p>
+        </div>
+        <ul class="sidebar-menu">
+            <li><a href="{% url 'custom_admin_dashboard' %}">📊 Dashboard</a></li>
+            <li><a href="{% url 'user_management' %}">👥 Users</a></li>
+            <li><a href="{% url 'course_management' %}" class="active">📚 Courses</a></li>
+            <li><a href="{% url 'finance_management' %}">💰 Finance</a></li>
+            <li><a href="/academics/">📖 Academics</a></li>
+            <li><a href="/assessments/">📝 Assessments</a></li>
+            <li><a href="/attendance/">📅 Attendance</a></li>
+            <li><a href="/library/">📚 Library</a></li>
+            <li><a href="/transport/">🚌 Transport</a></li>
+            <li>
+                <form action="{% url 'custom_admin_logout' %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit">🚪 Logout</button>
+                </form>
+            </li>
+        </ul>
+    </aside>
+    <div class="main-content">
+        <a href="{% url 'custom_admin_dashboard' %}" class="back-link">← Back to Dashboard</a>
+        <div class="section">
+            <div class="section-header">
+                <h2 class="section-title">📚 Course Management</h2>
+                <a href="/django-admin/academics/course/add/" class="btn">+ Add Course</a>
+            </div>
+            <table>
+                <thead>
+                    <tr><th>Code</th><th>Title</th><th>Teacher</th><th>Status</th><th>Actions</th></tr>
+                </thead>
+                <tbody>
+                    {% for course in courses %}
+                    <tr>
+                        <td>{{ course.code }}</td>
+                        <td>{{ course.title }}</td>
+                        <td>{{ course.teacher.teacher.get_full_name }}</td>
+                        <td>{% if course.is_published %}Published{% else %}Draft{% endif %}</td>
+                        <td><a href="/django-admin/academics/course/{{ course.id }}/change/" class="btn">Edit</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

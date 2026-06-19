@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Allocate Timetable Session</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #f5f7fa; padding: 30px; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 40px; border-radius: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        h1 { color: #2c3e50; margin-bottom: 20px; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: 600; color: #34495e; }
+        select, input { width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1em; }
+        .btn { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 15px 30px; border: none; border-radius: 8px; font-size: 1.1em; cursor: pointer; width: 100%; }
+        .btn:hover { opacity: 0.9; }
+        .messages { margin-bottom: 20px; }
+        .message { padding: 12px; border-radius: 8px; margin-bottom: 10px; }
+        .error { background: #fee; color: #c33; border-left: 4px solid #c33; }
+        .success { background: #e8f5e9; color: #2e7d32; border-left: 4px solid #388e3c; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>️ Smart Timetable Allocator</h1>
+        <p style="color: #7f8c8d; margin-bottom: 20px;">The system will automatically check for teacher, room, and class conflicts.</p>
+        
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <div class="message {{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label>Select Timetable (Class)</label>
+                <select name="timetable" required>
+                    <option value="">-- Choose Class Timetable --</option>
+                    {% for t in timetables %}
+                    <option value="{{ t.id }}">{{ t.class_assigned.name }} - {{ t.term.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Subject</label>
+                <select name="subject" required>
+                    <option value="">-- Choose Subject --</option>
+                    {% for s in subjects %}
+                    <option value="{{ s.id }}">{{ s.name }} ({{ s.code }})</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Teacher</label>
+                <select name="teacher" required>
+                    <option value="">-- Choose Teacher --</option>
+                    {% for t in teachers %}
+                    <option value="{{ t.id }}">{{ t.teacher.get_full_name }} - {{ t.specialization }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Room</label>
+                <select name="room" required>
+                    <option value="">-- Choose Room --</option>
+                    {% for r in rooms %}
+                    <option value="{{ r.id }}">{{ r.name }} (Capacity: {{ r.capacity }})</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Day</label>
+                <select name="day" required>
+                    {% for d in days %}
+                    <option value="{{ d }}">{{ d }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div class="form-group">
+                    <label>Start Time</label>
+                    <input type="time" name="start_time" required>
+                </div>
+                <div class="form-group">
+                    <label>End Time</label>
+                    <input type="time" name="end_time" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Period Name (Optional)</label>
+                <input type="text" name="period_name" placeholder="e.g., Period 1, Morning Assembly">
+            </div>
+            <button type="submit" class="btn">🚀 Allocate Session (Check Conflicts)</button>
+        </form>
+    </div>
+</body>
+</html>

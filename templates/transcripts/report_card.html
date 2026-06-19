@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report Card - {{ transcript.student.student.get_full_name }}</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 1.5cm;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 11pt;
+            line-height: 1.4;
+            color: #000;
+        }
+        .report-card {
+            max-width: 210mm;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            border-bottom: 3px double #333;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+        .school-logo {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 10px;
+        }
+        .school-name {
+            font-size: 24pt;
+            font-weight: bold;
+            color: #1e3a8a;
+            margin-bottom: 5px;
+        }
+        .school-details {
+            font-size: 10pt;
+            color: #666;
+        }
+        .report-title {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 10px;
+            text-align: center;
+            font-size: 16pt;
+            font-weight: bold;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .student-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+        .info-row {
+            display: flex;
+        }
+        .info-label {
+            font-weight: bold;
+            width: 120px;
+            color: #333;
+        }
+        .info-value {
+            color: #555;
+        }
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        .results-table th {
+            background: #1e3a8a;
+            color: white;
+            padding: 10px;
+            text-align: left;
+            font-weight: bold;
+            border: 1px solid #333;
+        }
+        .results-table td {
+            padding: 8px;
+            border: 1px solid #ddd;
+        }
+        .results-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        .results-table tr:hover {
+            background: #e9ecef;
+        }
+        .grade-a { color: #10b981; font-weight: bold; }
+        .grade-b { color: #3b82f6; font-weight: bold; }
+        .grade-c { color: #f59e0b; font-weight: bold; }
+        .grade-d { color: #f97316; font-weight: bold; }
+        .grade-f { color: #ef4444; font-weight: bold; }
+        .summary-box {
+            background: #f0f9ff;
+            border: 2px solid #0ea5e9;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+        .summary-item {
+            text-align: center;
+            padding: 10px;
+            background: white;
+            border-radius: 5px;
+        }
+        .summary-label {
+            font-size: 9pt;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        .summary-value {
+            font-size: 18pt;
+            font-weight: bold;
+            color: #1e3a8a;
+        }
+        .remarks-section {
+            margin: 20px 0;
+        }
+        .remarks-box {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 10px;
+            min-height: 60px;
+        }
+        .remarks-label {
+            font-weight: bold;
+            color: #1e3a8a;
+            margin-bottom: 5px;
+        }
+        .signatures {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin-top: 40px;
+            text-align: center;
+        }
+        .signature-line {
+            border-top: 1px solid #333;
+            padding-top: 5px;
+            margin-top: 40px;
+        }
+        .signature-label {
+            font-size: 9pt;
+            color: #666;
+        }
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 9pt;
+            color: #666;
+            border-top: 1px solid #ddd;
+            padding-top: 10px;
+        }
+        .attendance-table {
+            width: 100%;
+            margin: 15px 0;
+        }
+        .attendance-table td {
+            padding: 5px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+        .conduct-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        .conduct-table th, .conduct-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        .conduct-table th {
+            background: #f8f9fa;
+        }
+        @media print {
+            .no-print { display: none; }
+            body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        }
+    </style>
+</head>
+<body>
+    <div class="report-card">
+        <!-- Header -->
+        <div class="header">
+            {% if template and template.school_logo %}
+            <img src="{{ template.school_logo.url }}" alt="School Logo" class="school-logo">
+            {% endif %}
+            <div class="school-name">{{ template.school_name|default:"AFRIDIGITAL ONLINE SCHOOL" }}</div>
+            <div class="school-details">
+                {{ template.school_address|default:"P.O. Box 12345-00100, Nairobi, Kenya" }}<br>
+                Tel: {{ template.school_phone|default:"+254 700 000 000" }} | 
+                Email: {{ template.school_email|default:"info@afridigital.ac.ke" }}
+            </div>
+        </div>
+
+        <!-- Report Title -->
+        <div class="report-title">
+            STUDENT PROGRESS REPORT
+        </div>
+
+        <!-- Student Information -->
+        <div class="student-info">
+            <div class="info-row">
+                <span class="info-label">Student Name:</span>
+                <span class="info-value">{{ transcript.student.student.get_full_name }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Admission No:</span>
+                <span class="info-value">{{ transcript.student.admission_number }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Class:</span>
+                <span class="info-value">{{ transcript.student.current_class.name }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Academic Year:</span>
+                <span class="info-value">{{ transcript.academic_year.name }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Term:</span>
+                <span class="info-value">{{ transcript.term.name }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Report Date:</span>
+                <span class="info-value">{{ generated_date }}</span>
+            </div>
+        </div>
+
+        <!-- Academic Results -->
+        <h3 style="margin: 20px 0 10px; color: #1e3a8a;">ACADEMIC PERFORMANCE</h3>
+        <table class="results-table">
+            <thead>
+                <tr>
+                    <th>Subject</th>
+                    <th>CA 1</th>
+                    <th>CA 2</th>
+                    <th>CA 3</th>
+                    <th>Exam</th>
+                    <th>Total</th>
+                    <th>Grade</th>
+                    <th>Remarks</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for record in records %}
+                <tr>
+                    <td>{{ record.course.subject.name }}</td>
+                    <td>{{ record.continuous_assessment_1 }}</td>
+                    <td>{{ record.continuous_assessment_2 }}</td>
+                    <td>{{ record.continuous_assessment_3 }}</td>
+                    <td>{{ record.exam_score }}</td>
+                    <td><strong>{{ record.total_score }}</strong></td>
+                    <td class="grade-{{ record.letter_grade|lower }}">{{ record.letter_grade }}</td>
+                    <td>{{ record.teacher_remarks|default:"" }}</td>
+                </tr>
+                {% endfor %}
+                <tr style="background: #1e3a8a; color: white; font-weight: bold;">
+                    <td colspan="5" style="text-align: right;">TOTAL / AVERAGE:</td>
+                    <td>{{ transcript.total_marks|floatformat:1 }}</td>
+                    <td>-</td>
+                    <td>-</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Summary Box -->
+        <div class="summary-box">
+            <div class="summary-grid">
+                <div class="summary-item">
+                    <div class="summary-label">AVERAGE MARKS</div>
+                    <div class="summary-value">{{ transcript.average_marks|floatformat:1 }}%</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">GPA</div>
+                    <div class="summary-value">{{ transcript.gpa }}</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">CLASS POSITION</div>
+                    <div class="summary-value">{{ transcript.class_position }}/{{ transcript.total_students_in_class }}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Attendance -->
+        {% if template.show_attendance %}
+        <h3 style="margin: 20px 0 10px; color: #1e3a8a;">ATTENDANCE</h3>
+        <table class="attendance-table">
+            <tr>
+                <td style="background: #f8f9fa; font-weight: bold;">Days Present</td>
+                <td style="background: #f8f9fa; font-weight: bold;">Days Absent</td>
+                <td style="background: #f8f9fa; font-weight: bold;">Attendance %</td>
+            </tr>
+            <tr>
+                <td>{{ transcript.days_present }}</td>
+                <td>{{ transcript.days_absent }}</td>
+                <td><strong>{{ transcript.attendance_percentage|floatformat:1 }}%</strong></td>
+            </tr>
+        </table>
+        {% endif %}
+
+        <!-- Conduct/Behavior -->
+        {% if template.show_conduct and behavioral %}
+        <h3 style="margin: 20px 0 10px; color: #1e3a8a;">CONDUCT & BEHAVIOR</h3>
+        <table class="conduct-table">
+            <tr>
+                <th>Aspect</th>
+                <th>Grade</th>
+                <th>Aspect</th>
+                <th>Grade</th>
+            </tr>
+            <tr>
+                <td>Punctuality</td>
+                <td>{{ behavioral.punctuality }}</td>
+                <td>Respect</td>
+                <td>{{ behavioral.respect }}</td>
+            </tr>
+            <tr>
+                <td>Neatness</td>
+                <td>{{ behavioral.neatness }}</td>
+                <td>Participation</td>
+                <td>{{ behavioral.participation }}</td>
+            </tr>
+            <tr>
+                <td>Homework Completion</td>
+                <td>{{ behavioral.homework_completion }}</td>
+                <td>Teamwork</td>
+                <td>{{ behavioral.teamwork }}</td>
+            </tr>
+            <tr>
+                <td>Leadership</td>
+                <td>{{ behavioral.leadership }}</td>
+                <td><strong>Overall Conduct</strong></td>
+                <td><strong>{{ behavioral.overall_conduct }}</strong></td>
+            </tr>
+        </table>
+        {% endif %}
+
+        <!-- Remarks -->
+        {% if template.show_remarks %}
+        <div class="remarks-section">
+            <h3 style="margin: 20px 0 10px; color: #1e3a8a;">REMARKS</h3>
+            
+            <div class="remarks-box">
+                <div class="remarks-label">Class Teacher's Remarks:</div>
+                <div>{{ transcript.class_teacher_remarks|default:"" }}</div>
+            </div>
+            
+            <div class="remarks-box">
+                <div class="remarks-label">Principal's Remarks:</div>
+                <div>{{ transcript.principal_remarks|default:"" }}</div>
+            </div>
+            
+            <div class="remarks-box">
+                <div class="remarks-label">General Remarks:</div>
+                <div>{{ transcript.general_remarks|default:"" }}</div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Signatures -->
+        {% if template.show_signature_lines %}
+        <div class="signatures">
+            <div>
+                <div class="signature-line">
+                    <div class="signature-label">Class Teacher</div>
+                </div>
+            </div>
+            <div>
+                <div class="signature-line">
+                    <div class="signature-label">Principal</div>
+                </div>
+            </div>
+            <div>
+                <div class="signature-line">
+                    <div class="signature-label">Parent/Guardian</div>
+                    {% if transcript.parent_signature %}
+                    <div style="font-size: 9pt; margin-top: 5px;">Signed: {{ transcript.parent_signature }}</div>
+                    <div style="font-size: 9pt;">Date: {{ transcript.parent_date|date:"d/m/Y" }}</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>This is an official document of {{ template.school_name|default:"AfriDigital Online School" }}</p>
+            <p>Generated on: {{ generated_date }} | Report ID: {{ transcript.id }}</p>
+        </div>
+
+        <!-- Print Button -->
+        <div class="no-print" style="text-align: center; margin-top: 30px; padding: 20px;">
+            <button onclick="window.print()" style="
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                border: none;
+                padding: 15px 40px;
+                font-size: 16px;
+                border-radius: 8px;
+                cursor: pointer;
+                box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            ">
+                 Print Report Card
+            </button>
+            <button onclick="window.close()" style="
+                background: #6c757d;
+                color: white;
+                border: none;
+                padding: 15px 40px;
+                font-size: 16px;
+                border-radius: 8px;
+                cursor: pointer;
+                margin-left: 10px;
+            ">
+                Close
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Auto-print on load (optional - uncomment if desired)
+        // window.onload = function() { window.print(); }
+    </script>
+</body>
+</html>

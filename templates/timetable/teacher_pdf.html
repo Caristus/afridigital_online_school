@@ -1,0 +1,54 @@
+{% load timetable_tags %}
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    body { font-family: Helvetica, sans-serif; font-size: 10px; }
+    h1 { color: #2c3e50; text-align: center; margin-bottom: 5px; }
+    h2 { color: #7f8c8d; text-align: center; margin-top: 0; font-size: 12px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { border: 1px solid #34495e; padding: 8px; text-align: center; vertical-align: middle; }
+    th { background-color: #8e44ad; color: white; font-weight: bold; }
+    .time-col { background-color: #ecf0f1; font-weight: bold; width: 15%; }
+    .session { background-color: #f5eef8; }
+    .subject { font-weight: bold; color: #8e44ad; display: block; }
+    .class-info { font-size: 9px; color: #2c3e50; }
+    .room { font-size: 9px; color: #e67e22; font-weight: bold; }
+</style>
+</head>
+<body>
+    <h1>🎓 AfriDigital Online School</h1>
+    <h2>Teacher Timetable: {{ teacher.teacher.get_full_name }} ({{ teacher.specialization }})</h2>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Time / Day</th>
+                {% for day in days %}
+                <th>{{ day }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for start, end in time_slots %}
+            <tr>
+                <td class="time-col">{{ start|time:"H:i" }} - {{ end|time:"H:i" }}</td>
+                {% for day in days %}
+                <td>
+                    {% with session=grid|get_item:day|get_item:start:end %}
+                    {% if session %}
+                        <div class="session">
+                            <span class="subject">{{ session.subject.name }}</span>
+                            <span class="class-info">{{ session.timetable.class_assigned.name }}</span>
+                            {% if session.room %}<br><span class="room">📍 {{ session.room.name }}</span>{% endif %}
+                        </div>
+                    {% endif %}
+                    {% endwith %}
+                </td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
