@@ -3,7 +3,7 @@ venv/
 env/
 ENV/
 
-# Database
+# Database (local only)
 db.sqlite3
 *.sqlite3
 
@@ -33,8 +33,11 @@ wheels/
 *.log
 local_settings.py
 
-# Media files
+# Media files (uploaded by users)
 media/
+
+# Static files (collected)
+staticfiles/
 
 # IDE
 .vscode/
@@ -46,3 +49,6 @@ media/
 # OS
 .DS_Store
 Thumbs.db
+
+# Environment variables
+.env
